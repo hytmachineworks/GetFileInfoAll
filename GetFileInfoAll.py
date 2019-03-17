@@ -25,14 +25,31 @@ def start_db(table_name):
     # start db
     db = TinyDB("DirFileInfo.json")
 
-    table_name_normalize = table_name.replace("/", "\\")
-
+    table_name_resolve = create_normalize_path(table_name)
     # select table
-    db_table = db.table(table_name_normalize)
+    db_table = db.table(table_name_resolve)
 
-    result_dict = {"db": db_table, "table_name": table_name_normalize}
+    result_dict = {"db": db_table, "table_name": table_name_resolve}
 
     return result_dict
+
+
+def create_normalize_path(org_path_str, slash=False):
+    """ create normalize path string
+
+    :param org_path_str: original path string
+    :param slash: slash or back slash boolean
+    :return: normalize path string
+    """
+
+    org_path_str_replace = org_path_str.replace("\\", "/")
+
+    if slash:
+        return org_path_str_replace
+
+    normalize_path = str(Path(org_path_str_replace).resolve())
+
+    return normalize_path
 
 
 def search_dir_files(db_table, this_floor_path_list, level):
@@ -97,7 +114,7 @@ def search_dir_files(db_table, this_floor_path_list, level):
 
             file_size = 0
 
-        target_path_dict = {"path": target_path_str,
+        target_path_dict = {"path": target_path_str.replace("\\", "/"),
                             "path_type": target_path_type,
                             "level": level,
                             "last_access": last_access.strftime(TIME_FORMAT),
@@ -107,8 +124,6 @@ def search_dir_files(db_table, this_floor_path_list, level):
 
         if error_str:
             target_path_dict["error_description"] = error_str
-
-        # db_table.insert(target_path_dict)
 
         return dir_list, target_path_dict
 
