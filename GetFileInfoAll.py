@@ -1,3 +1,10 @@
+# coding = utf-8
+"""
+create on : 2019/03/02
+project name : GetFileInfoAll
+file name : GetFileInfoAll
+
+"""
 from datetime import datetime as dt
 from pathlib import Path
 import time
